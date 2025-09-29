@@ -302,6 +302,7 @@ $(document).ready(function() {
     
     // Add to cart functionality
     $('.add-to-cart').click(function() {
+        const button = $(this);
         const productId = $(this).data('product-id');
         const productName = $(this).data('product-name');
         const productPrice = parseFloat($(this).data('product-price'));
@@ -322,6 +323,29 @@ $(document).ready(function() {
         
         updateCart();
         showToast(`${productName} added to cart!`);
+
+        // Store original button content
+    const originalText = button.text();
+    const originalClass = button.attr('class');
+
+    // Visual feedback
+    button.removeClass('bg-orange-500 hover:bg-orange-600')
+          .addClass('bg-green-900')
+          .html('✓ Adding!')
+          .prop('disabled', true);
+    
+    // Animate cart icon
+    $('#cart-btn').addClass('animate-bounce');
+    
+    // Reset button after 1.5 seconds
+    setTimeout(() => {
+        button.attr('class', "text-sm add-to-cart cart-btn  ")
+              .text('✓ Added')
+              .prop('disabled', false);
+        $('#cart-btn').removeClass('animate-bounce');
+    }, 1500);
+
+
     });
     
     // Update cart display

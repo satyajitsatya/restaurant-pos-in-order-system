@@ -56,7 +56,9 @@
                 <tr class="order-row" data-order-id="{{ $order->id }}">
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div>
-                            <div class="text-sm font-medium text-gray-900">#{{ $order->id }}</div>
+                            <a href="{{ route('admin.orders.show', $order) }}" class="hover:underline">
+                                <div class="text-sm font-medium text-gray-900">#{{ $order->id }}</div>
+                            </a>
                             <div class="text-sm text-gray-500">{{ $order->customer_name }}</div>
                             <div class="text-xs text-gray-400">{{ $order->created_at->format('M d, Y H:i') }}</div>
                         </div>

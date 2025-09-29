@@ -13,6 +13,14 @@
                             {{ session('status') }}
                         </div>
                     @endif
+                    @if (Auth::user()->role == 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-primary">Go to Admin Dashboard</a>
+                    @elseif (Auth::user()->role == 'user')
+                        <a href="{{ route('user.dashboard') }}" class="btn btn-primary">Go to User Dashboard</a>
+                    @else
+                        <a href="{{ route('menu.index') }}" class="btn btn-primary">Go to Guest Dashboard</a>
+                        
+                    @endif
 
                     {{ __('You are logged in!') }}
                 </div>

@@ -12,11 +12,14 @@
     <!-- Custom CSS -->
     <style>
         /* Custom Restaurant Styles */
-        .btn-primary {
+        /* .btn-primary {
             @apply bg-orange-500 hover:bg-orange-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
         }
         
-        .btn-secondary {
+        .btn-
+        .form-input {
+            @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent;
+        }secondary {
             @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
         }
         
@@ -24,10 +27,102 @@
             @apply bg-white rounded-lg shadow-sm border border-gray-200;
         }
         
-        .form-input {
-            @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent;
+         */
+
+
+             /* Custom Restaurant Styles - Regular CSS */
+    .btn-primary {
+        background-color: #f97316; /* orange-500 */
+        color: white;
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        transition: background-color 0.2s ease-in-out;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+    
+    .btn-primary:hover {
+        background-color: #ea580c; /* orange-600 */
+    }
+    
+    .btn-primary:disabled {
+        background-color: #9ca3af;
+        cursor: not-allowed;
+    }
+    
+    .btn-secondary {
+        background-color: #e5e7eb; /* gray-200 */
+        color: #1f2937; /* gray-800 */
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        transition: background-color 0.2s ease-in-out;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+    
+    .btn-secondary:hover {
+        background-color: #d1d5db; /* gray-300 */
+    }
+    
+    .card {
+        background-color: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        border: 1px solid #e5e7eb;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease-in-out;
+        background-color: white;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        ring: 2px;
+        ring-color: #f97316;
+        border-color: transparent;
+        box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.5);
+    }
+    
+
+        .cart-btn {
+       
+            background-color: #0990f8;
+            border-color: #16a34a;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            border: 1px solid #16a34a;
         }
-        
+
+        /* .place-order {
+            background-color: #3b82f6;
+            border-color: #2563eb;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            border: 1px solid #2563eb;
+        } */
         /* Veg/Non-veg indicators */
         .veg-indicator {
             width: 16px;

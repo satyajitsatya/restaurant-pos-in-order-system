@@ -229,6 +229,7 @@ class MenuController extends Controller
             'estimated_time' => $this->calculateEstimatedTime($order),
             'items' => $order->items->map(function ($item) {
                 return [
+                    'id' => $item->id,
                     'name' => $item->product->name,
                     'quantity' => $item->quantity,
                     'status' => $item->status,

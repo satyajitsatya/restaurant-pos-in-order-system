@@ -238,6 +238,7 @@ $(document).ready(function() {
                     // Update item statuses
                     data.items.forEach(function(item) {
                         const itemStatusEl = $(`.item-status[data-item-id="${item.id}"]`);
+                        // alert(itemStatusEl);
                         if (itemStatusEl.length) {
                             itemStatusEl.text(item.status_text);
                             
@@ -266,6 +267,7 @@ $(document).ready(function() {
         
         // Update every 5 seconds
         setInterval(updateOrderStatus, 5000);
+       
     @else
         // Handle order tracking form
         $('#track-form').submit(function(e) {

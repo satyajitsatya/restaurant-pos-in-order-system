@@ -14,11 +14,16 @@
                         <span class="text-gray-300">Active Orders:</span>
                         <span class="text-yellow-400 font-bold text-lg" id="active-orders-count">{{ $activeOrders->count() }}</span>
                     </div>
+                    <div>
+                        <button id="refresh-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            Refresh
+                        </button>
+                    </div>
                     <div class="text-sm">
                         <span class="text-gray-300">Last Updated:</span>
                         <span class="text-green-400" id="last-updated">{{ now()->format('H:i:s') }}</span>
                     </div>
-                </div>
+                </div>   
             </div>
         </div>
     </header>
@@ -158,6 +163,15 @@
 @push('scripts')
 <script>
 $(document).ready(function() {
+    
+    // Manual refresh button
+    $('#refresh-btn').click(function() {
+        window.location.reload();
+    });
+    // setInterval(function() {
+    //     window.location.reload();
+    // }, 30000); 
+    
     // Auto-refresh every 3 seconds
     setInterval(function() {
         refreshKitchenData();
@@ -224,6 +238,12 @@ $(document).ready(function() {
                             🍽️ Order Complete - Ready to Serve!
                         </div>
                     `);
+
+                    setTimeout(() => {
+                        // winsdow.location.reload();
+                        // alert('Order is complete! Refreshing page...');
+                        window.location.reload();
+                    }, 2000);
                     
                     // Play notification sound
                     document.getElementById('order-sound')?.play();
@@ -272,11 +292,19 @@ $(document).ready(function() {
                         🍽️ Order Complete - Ready to Serve!
                     </div>
                 `);
+
+                  setTimeout(() => {
+                        // winsdow.location.reload();
+                        // alert('Order is complete! Refreshing page...');
+                        window.location.reload();
+                    }, 2000);  
                 
                 // Play notification sound
                 document.getElementById('order-sound')?.play();
                 
                 showToast(response.message);
+
+              
             }
         })
         .fail(function() {
