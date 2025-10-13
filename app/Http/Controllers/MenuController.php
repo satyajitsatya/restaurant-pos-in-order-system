@@ -21,11 +21,18 @@ class MenuController extends Controller
         // Get all active categories, ordered by sort_order
         $categories = Category::active()
             ->orderBy('sort_order')
+            ->withCount('products') // Get product count for each category
             ->get();
 
         // Build query for products
-        $productsQuery = Product::with('category') // Eager load category relationship
-            ->active(); // Only active products
+        $productsQuery = Product::with(['category' => function ($query) {
+            $query->active();
+        }]) // Eager load category relationship
+
+            ->active()
+            ->whereHas('category', function ($query) {
+                $query->active();
+            }); // Only active products
 
         // Apply filters if provided
         if ($request->filled('category')) {

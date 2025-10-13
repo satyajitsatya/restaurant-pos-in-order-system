@@ -36,7 +36,7 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:100|unique:categories',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:2048',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'boolean'
         ]);
@@ -74,6 +74,7 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
+        $category->loadCount('products');
         return view('admin.categories.edit', compact('category'));
     }
 
@@ -84,7 +85,7 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:100|unique:categories,name,' . $category->id,
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:2048',
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'boolean'
         ]);

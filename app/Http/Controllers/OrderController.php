@@ -38,7 +38,9 @@ class OrderController extends Controller
 
         $orders = $query->latest()->paginate(20);
 
-        return view('admin.orders.index', compact('orders'));
+        $pending_orders = Order::where('status', 'pending')->count();
+
+        return view('admin.orders.index', compact('orders', "pending_orders"));
     }
 
     /**

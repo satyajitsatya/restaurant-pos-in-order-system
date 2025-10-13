@@ -171,23 +171,170 @@ $(document).ready(function() {
     // setInterval(function() {
     //     window.location.reload();
     // }, 30000); 
+
+
+   
+    let currentOrderCount = 0;
+let isReloading = false;
+
+function refreshKitchenData() {
+    if (isReloading) return; // Prevent multiple reloads
+    
+    $.get('{{ route("kitchen.live-data") }}')
+        .done(function(data) {
+            // const nowOrderCount = Object.keys(data.orders).length;
+            const nowOrderCount = Object.values(data.orders).reduce((sum, orderList) => {
+    // 'sum' is the accumulated total
+    // 'orderList.length' is the number of orders for the current table
+    return sum + orderList.length;
+     }, 0);
+
+            // alert(nowOrderCount);
+            
+            // Check if new orders have been added
+            if (nowOrderCount > currentOrderCount) {
+                const newOrdersCount = nowOrderCount - currentOrderCount;
+                
+                // Show notification
+                showNewOrderNotification(newOrdersCount);
+                
+                // Set reload flag
+                isReloading = true;
+                
+                // Reload after a short delay to show the notification
+                setTimeout(() => {
+                    console.log(`${newOrdersCount} new order(s) received! Reloading page...`);
+                    location.reload();
+                }, 2000);
+                
+                return;
+            }
+            
+            // Update the stored count
+            currentOrderCount = nowOrderCount;
+            
+            // Update the display
+            updateKitchenDisplay(data.orders);
+            $('#active-orders-count').text(nowOrderCount);
+            $('#last-updated').text(new Date().toLocaleTimeString());
+        })
+        .fail(function() {
+            console.log('Failed to refresh kitchen data');
+        });
+}
+
+
+   
+function showNewOrderNotification(count) {
+    // Create notification element
+    const notification = $(`
+        <div id="new-order-notification" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300">
+            <div class="flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM10.07 2.82l3.64 1.15c.75.24 1.29.92 1.29 1.73v8.89c0 .67-.34 1.3-.91 1.66L9 19.07V2.82z"/>
+                </svg>
+                <span class="font-semibold">
+                    ${count} New Order${count > 1 ? 's' : ''} Received!
+                </span>
+            </div>
+            <div class="text-sm mt-1">Page will reload in 2 seconds...</div>
+        </div>
+    `);
+    
+    // Add to page
+    $('body').append(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.removeClass('translate-x-full');
+    }, 100);
+    
+    // Play notification sound (optional)
+    // playNotificationSound();
+       document.getElementById('order-sound')?.play();
+  }
+
+
+  
+      
+// function playNotificationSound() {
+//     // Create and play notification sound
+//        try {
+//         const audio = new Audio('/sounds/notification.mp3'); // Add your notification sound file
+//         audio.play().catch(e => console.log('Could not play notification sound'));
+//        } catch (e) {
+//         console.log('Notification sound not available');
+//       }
+//    }
+
+function playNotificationSound() {
+    try {
+        const audio = new Audio('/sounds/notification.mp3');
+        
+        // Add event listeners for debugging
+        audio.addEventListener('loadstart', () => console.log('Audio loading started'));
+        audio.addEventListener('canplay', () => console.log('Audio can start playing'));
+        audio.addEventListener('error', (e) => {
+            console.error('Audio error:', e);
+            console.error('Audio error details:', audio.error);
+        });
+        
+        // Set volume (optional)
+        audio.volume = 0.5;
+        
+        // Attempt to play
+        const playPromise = audio.play();
+        
+        if (playPromise !== undefined) {
+            playPromise
+                .then(() => {
+                    console.log('Audio played successfully');
+                })
+                .catch(error => {
+                    console.error('Play failed:', error.name, error.message);
+                    
+                    // Handle specific errors
+                    if (error.name === 'NotAllowedError') {
+                        console.log('Audio blocked by browser - user interaction required');
+                        showAudioPermissionAlert();
+                    } else if (error.name === 'NotSupportedError') {
+                        console.log('Audio format not supported');
+                    }
+                });
+        }
+        
+    } catch (e) {
+        console.error('Error creating audio:', e);
+    }
+}
+
+
+
+// Initialize when page loads
+$(document).ready(function() {
+    // Set initial order count
+    currentOrderCount = parseInt($('#active-orders-count').text()) || 0;
+    
+    // Start the refresh interval
+    setInterval(refreshKitchenData, 3000); // Check every 3 seconds for faster response
+});
     
     // Auto-refresh every 3 seconds
-    setInterval(function() {
-        refreshKitchenData();
-    }, 3000);
+    // setInterval(function() {
+    //     refreshKitchenData();
+    // }, 3000);
     
-    function refreshKitchenData() {
-        $.get('{{ route("kitchen.live-data") }}')
-            .done(function(data) {
-                updateKitchenDisplay(data.orders);
-                $('#active-orders-count').text(Object.keys(data.orders).length);
-                $('#last-updated').text(new Date().toLocaleTimeString());
-            })
-            .fail(function() {
-                console.log('Failed to refresh kitchen data');
-            });
-    }
+    // function refreshKitchenData() {
+    //     $.get('{{ route("kitchen.live-data") }}')
+    //         .done(function(data) {
+    //             updateKitchenDisplay(data.orders);
+    //             $('#active-orders-count').text(Object.keys(data.orders).length);
+    //             $('#last-updated').text(new Date().toLocaleTimeString());
+    //         })
+    //         .fail(function() {
+    //             console.log('Failed to refresh kitchen data');
+    //         });
+    // }    
     
     function updateKitchenDisplay(orders) {
         // This would update the display with new order data
