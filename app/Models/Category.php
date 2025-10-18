@@ -29,6 +29,14 @@ class Category extends Model
         return $this->hasMany(Product::class);
     }
 
+    // New relationship to ONLY active products
+    public function activeProducts()
+    {
+        return $this->hasMany(Product::class)->where('is_active', 1);
+        // OR, if 'status' is a column with a string value like 'active':
+        // return $this->hasMany(Product::class)->where('status', 'active');
+    }
+
     /**
      * Scope to get only active categories
      * Usage: Category::active()->get()

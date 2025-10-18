@@ -43,6 +43,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
         Route::post('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
         Route::get('/orders/pending/data', [OrderController::class, 'getPendingOrders'])->name('orders.pending');
+        Route::post('/orderItem/{orderItem}/cancel', [OrderController::class, 'cancelItem'])->name('orderItem.cancel');
+
 
         // Categories Management  
         Route::resource('categories', CategoryController::class);

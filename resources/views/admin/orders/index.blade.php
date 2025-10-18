@@ -535,6 +535,14 @@ $(document).ready(function() {
                                     </svg>
                                     Cancel
                                 </button>
+                            @elseif($order->items->count() === 0) 
+                                <button class="flex-1 sm:flex-none inline-flex justify-center items-center px-4 py-2 border border-red-300 text-sm font-medium rounded-lg text-red-700 bg-red-50 hover:bg-red-100 update-status-btn transition-colors duration-200" 
+                                        data-order-id="{{ $order->id }}" data-status="cancelled">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                    Cancel
+                                </button>     
                             @elseif($order->status === 'accepted')
                                 <button class="flex-1 sm:flex-none inline-flex justify-center items-center px-4 py-2 border border-orange-300 text-sm font-medium rounded-lg text-orange-700 bg-orange-50 hover:bg-orange-100 update-status-btn transition-colors duration-200" 
                                         data-order-id="{{ $order->id }}" data-status="preparing">
@@ -559,6 +567,7 @@ $(document).ready(function() {
                                     </svg>
                                     Mark Served
                                 </button>
+                              
                             @endif
                         </div>
                     </div>

@@ -128,4 +128,34 @@ class OrderController extends Controller
             'count' => $orders->count()
         ]);
     }
+
+    /**
+     * Cancel individual order item and update order total price
+     */
+    public function cancelItem(Request $request, OrderItem $orderItem)
+    {
+
+        if ($orderItem->status === 'ready' || $orderItem->status === 'served') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot cancel an item that has already been ready or served.'
+            ], 202);
+        }
+        $orderItem->update(['status' => 'cancelled']);
+        // Check if all items are cancelled or served, update order status
+        $order = $orderItem->order;
+        $order->total_amount = $order->total_amount - $orderItem->price;
+        $order->decrement('total_amount', $orderItem->price);
+        $allItemsCancelled = $order->items()->whereNotIn('status', ['cancelled'])->count() === 0;
+        if ($allItemsCancelled) {
+            $order->update(['status' => 'cancelled']);
+        }
+
+        $orderItem->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'Item cancelled successfully',
+            'order_status_updated' => $allItemsCancelled
+        ]);
+    }
 }

@@ -22,6 +22,7 @@ class MenuController extends Controller
         $categories = Category::active()
             ->orderBy('sort_order')
             ->withCount('products') // Get product count for each category
+            ->withCount('activeProducts') // Get active product count for each category
             ->get();
 
         // Build query for products

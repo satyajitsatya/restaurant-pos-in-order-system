@@ -64,6 +64,7 @@
                                                 @endif">
                                                 {{ ucfirst($item->status) }}
                                             </span>
+                                            <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-full text-xs font-medium transition-colors cancel-btn"  data-itemid="{{ $item->id }}" data-order-id="{{ $item->order->id }}">Cancel item</button>
                                         </div>
                                     </div>
                                 </div>
@@ -216,6 +217,39 @@ $(document).ready(function() {
         .always(function() {
             button.prop('disabled', false);
         });
+    });
+});
+
+
+$('.cancel-btn').click(function() {
+    const button = $(this);
+    const itemId = button.data('itemid');
+    const orderId = button.data('order-id');
+    
+    if (!confirm('Are you sure you want to cancel this item?')) {
+        return;
+    }
+    
+    button.prop('disabled', true).text('Cancelling...');
+    
+    $.post(`/admin/orderItem/${itemId}/cancel`)
+    .done(function(response) {
+        if (response.success) {
+            showToast(response.message);
+            // Reload page to show updated status
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        }
+        else {
+            showToast(response.message, 'error');
+        }
+    })
+    .fail(function() {
+        showToast('Failed to cancel item', 'error');
+    })
+    .always(function() {
+        button.prop('disabled', false).text('Cancel item');
     });
 });
 </script>

@@ -117,7 +117,7 @@
                                     data-category="{{ $category->id }}">
                                 <span class="font-medium">{{ $category->name }}</span>
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">{{ $category->products_count }}</span>
+                                    <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">{{ $category->active_products_count }}</span>
                                     <div class="w-2 h-2 bg-transparent rounded-full group-hover:bg-orange-500 transition-all duration-200"></div>
                                 </div>
                             </button>
@@ -139,7 +139,7 @@
                     <button class="flex-shrink-0 px-6 py-3 bg-white text-gray-700 rounded-full font-semibold shadow-md hover:shadow-lg category-btn transition-all duration-200 transform hover:scale-105 border border-gray-200" 
                             data-category="{{ $category->id }}">
                         {{ $category->name }}
-                        <span class="ml-2 text-xs bg-gray-100 px-2 py-1 rounded-full">{{ $category->products_count }}</span>
+                        <span class="ml-2 text-xs bg-gray-100 px-2 py-1 rounded-full">{{ $category->active_products_count }}</span>
                     </button>
                 @endforeach
             </div>
