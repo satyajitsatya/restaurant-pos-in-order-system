@@ -160,19 +160,76 @@ class AdminController extends Controller
      */
     public function getLiveData()
     {
-        $pendingOrders = Order::with(['table', 'items.product'])
+        // Get selected date (default to today)
+        $selectedDate =  Carbon::today()->format('Y-m-d');
+        $date = Carbon::parse($selectedDate);
+
+
+        $todaySales = Order::whereDate('created_at', $date)
+            ->whereIn('status', ['served', 'ready'])
+            ->sum('total_amount');
+
+        // Compare with previous period
+        $previousDate = $date->copy()->subDay();
+        $previousDaySales = Order::whereDate('created_at', $previousDate)
+            ->whereIn('status', ['served', 'ready'])
+            ->sum('total_amount');
+
+        $salesGrowth = $previousDaySales > 0 ?
+            (($todaySales - $previousDaySales) / $previousDaySales) * 100 : ($todaySales > 0 ? 100 : 0);
+
+        $totalOrders = Order::whereDate('created_at', $date)->count();
+
+
+        $pendingOrders_count = Order::with(['table', 'items.product'])
             ->where('status', 'pending')
+            ->count();
+        // ->latest()
+        // ->get();
+
+        $newOrdersCount = Order::with(['table', 'items.product'])
+            ->where('status', 'pending')
+            ->where('created_at', '>', now()->subMinutes(1))
             ->latest()
             ->get();
 
-        $newOrdersCount = Order::where('status', 'pending')
-            ->where('created_at', '>', now()->subMinutes(1))
-            ->count();
+        $activeTables = Table::whereHas('orders', function ($query) {
+            $query->whereIn('status', ['pending', 'accepted', 'preparing', 'ready']);
+        })->count();
 
         return response()->json([
-            'pending_orders' => $pendingOrders,
-            'new_orders_count' => $newOrdersCount,
+            'pendingOrders_count' => $pendingOrders_count,
+            'activeTables' => $activeTables,
+            'todaySales' => $todaySales,
+            'salesGrowth' => $salesGrowth,
+            'totalOrders' => $totalOrders,
+            'new_orders' => $newOrdersCount,
             'timestamp' => now()->timestamp
         ]);
+    }
+
+
+
+    /**
+     * Refresh recent orders for dashboard
+     */
+    public function refreshRecentOrders(Request $request)
+    {
+        // You can get the date from the request if needed, otherwise default to today
+        $date = $request->input('date', Carbon::today()->toDateString());
+
+        $recentOrders = Order::with(['table', 'items.product'])
+            ->whereDate('created_at', $date)
+            ->latest()
+            ->take(10)
+            ->get();
+
+        // Render the partial view with the new order data
+        $view = view('admin.orders.recent_orders_table', [
+            'recentOrders' => $recentOrders,
+            'selectedDate' => $date
+        ])->render();
+
+        return response()->json(['html' => $view]);
     }
 }

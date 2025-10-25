@@ -58,15 +58,19 @@ class KitchenController extends Controller
      */
     public function getLiveData()
     {
-        $activeOrders = Order::with(['table', 'items.product'])
-            ->whereIn('status', ['accepted', 'preparing'])
-            ->orderBy('created_at')
-            ->get();
 
-        $groupedOrders = $activeOrders->groupBy('table.table_number');
+        $activeOrders = Order::whereIn('status', ['accepted', 'preparing'])
+            ->orderBy('created_at')
+            ->count();
+        // $activeOrders = Order::with(['table', 'items.product'])
+        //     ->whereIn('status', ['accepted', 'preparing'])
+        //     ->orderBy('created_at')
+        //     ->get();
+
+        // $groupedOrders = $activeOrders->groupBy('table.table_number');
 
         return response()->json([
-            'orders' => $groupedOrders,
+            'orders' => $activeOrders,
             'timestamp' => now()->timestamp
         ]);
     }

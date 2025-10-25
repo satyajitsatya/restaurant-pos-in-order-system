@@ -37,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         Route::get('/live-data', [AdminController::class, 'getLiveData'])->name('live-data');
+        Route::get('/orders/refresh', [AdminController::class, 'refreshRecentOrders'])->name('orders.refresh');
 
         // Orders Management
         Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');

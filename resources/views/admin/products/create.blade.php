@@ -265,7 +265,7 @@
                                         <span class="text-gray-500 text-lg font-semibold">₹</span>
                                     </div>
                                     <input type="number" name="price" id="price" step="0.01" min="0" value="{{ old('price') }}" required
-                                           class="form-input w-full border-2 border-gray-200 rounded-lg pl-8 pr-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 @error('price') border-red-300 focus:ring-red-500 @enderror" 
+                                           class="form-input price-input w-full border-2 border-gray-200 rounded-lg pl-8 pr-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 @error('price') border-red-300 focus:ring-red-500 @enderror" 
                                            placeholder="0.00">
                                 </div>
                                 @error('price')

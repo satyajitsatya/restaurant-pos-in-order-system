@@ -183,11 +183,12 @@ function refreshKitchenData() {
     $.get('{{ route("kitchen.live-data") }}')
         .done(function(data) {
             // const nowOrderCount = Object.keys(data.orders).length;
-            const nowOrderCount = Object.values(data.orders).reduce((sum, orderList) => {
-    // 'sum' is the accumulated total
-    // 'orderList.length' is the number of orders for the current table
-    return sum + orderList.length;
-     }, 0);
+    //         const nowOrderCount = Object.values(data.orders).reduce((sum, orderList) => {
+    // // 'sum' is the accumulated total
+    // // 'orderList.length' is the number of orders for the current table
+    // return sum + orderList.length;
+    //  }, 0);
+            const nowOrderCount =parseInt(data.orders);
 
             // alert(nowOrderCount);
             

@@ -9,6 +9,7 @@ use App\Models\Table;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class MenuController extends Controller
 {
@@ -118,7 +119,8 @@ class MenuController extends Controller
                 'total_amount' => $totalAmount,
                 'payment_method' => $validated['payment_method'],
                 'notes' => $validated['notes'] ?? null,
-                'status' => 'pending'
+                'status' => 'pending',
+                'created_at' => Carbon::now('Asia/Kolkata'),
             ]);
 
             // Create order items

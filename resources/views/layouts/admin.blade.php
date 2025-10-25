@@ -7,7 +7,8 @@
     <title>@yield('title', 'Admin') - Restaurant POS</title>
     
     <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <!-- Custom styles (same as your original) -->
     <style>
@@ -101,7 +102,7 @@
         }
     </style>
     
-    <script>
+    {{-- <script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -120,7 +121,7 @@
                 }
             }
         }
-    </script>
+    </script> --}}
     
     @stack('styles')
 </head>

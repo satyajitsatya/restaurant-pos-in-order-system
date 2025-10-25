@@ -15,7 +15,7 @@ window.showToast = function (message, type = "success") {
 
     const toast = document.createElement("div");
     toast.id = toastId;
-    toast.className = `${bgColor} text-white px-4 py-2 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300`;
+    toast.className = `${bgColor} text-white px-4 py-2 m-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300`;
     toast.textContent = message;
 
     toastContainer.appendChild(toast);

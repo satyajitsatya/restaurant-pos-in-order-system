@@ -9,6 +9,7 @@
         <div class="px-4 py-4 flex items-center justify-between">
             <div class="flex-1">
                 <h1 class="text-xl font-bold text-gray-900">Our Menu</h1>
+                
                 @if($tableInfo)
                     <div class="flex items-center mt-1">
                         <svg class="w-4 h-4 text-orange-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

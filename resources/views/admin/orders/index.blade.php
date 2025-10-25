@@ -242,7 +242,7 @@ $(document).ready(function() {
                                 </div>
                                 <input type="text" name="search" value="{{ request('search') }}" 
                                        placeholder="Search by order ID or customer name..." 
-                                       class="form-input pl-10 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200">
+                                       class="form-input price-input w-full pl-10 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200">
                             </div>
                         </div>
                         
@@ -760,13 +760,13 @@ $(document).ready(function() {
             .done(function(data) {
                 // Update pending orders count
                 const currentCount = parseInt($('#pending-orders-count').text());
-                const newCount = data.pending_orders.length;
+                const newCount = parseInt(data.pendingOrders_count);
                 
                 $('#pending-orders-count').text(newCount+' Pending Orders');
                 
                 // Show alert for new orders
-                if (newCount > currentCount && data.new_orders_count > 0) {
-                    showNewOrderAlert(data.pending_orders[0]);
+                if (newCount > currentCount && data.new_orders.length > 0) {
+                    showNewOrderAlert(data.new_orders[0]);
                 }
                 
                 // Update recent orders table

@@ -7,7 +7,8 @@
     <title>@yield('title', 'Restaurant POS')</title>
     
     <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    {{-- <script src="https://cdn.tailwindcss.com"></script> --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     
     <!-- Custom CSS -->
     <style>
@@ -176,10 +177,14 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
+
+        .mg-top-50 {
+            margin-top: 2.5rem;
+        }
     </style>
     
     <!-- Custom Tailwind Configuration -->
-    <script>
+    {{-- <script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -198,7 +203,7 @@
                 }
             }
         }
-    </script>
+    </script> --}}
     
     @stack('styles')
 </head>
@@ -218,7 +223,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     
     <!-- Toast Notifications -->
-    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2">
+    <div id="toast-container" class="fixed top-4 right-4 mg-top-50 z-50 space-y-2">
         <!-- Toasts will be added here via JavaScript -->
     </div>
     

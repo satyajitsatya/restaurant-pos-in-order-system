@@ -381,6 +381,7 @@ $(document).ready(function() {
 
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-6 lg:space-y-0">
     <div>
+        
         <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Dashboard</h1>
         <p class="mt-2 text-sm lg:text-base text-gray-600">Welcome back! Here's what's happening at your restaurant.</p>
         <button id="enableAlertsBtn" 
@@ -475,9 +476,9 @@ $(document).ready(function() {
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600">Selected Date Sales</p>
-                    <p class="text-3xl font-bold text-green-600">₹{{ number_format($todaySales, 0) }}</p>
+                    <p id="total_sales" class="text-3xl font-bold text-green-600">₹{{ number_format($todaySales, 0) }}</p>
                     @if($salesGrowth != 0)
-                        <p class="text-xs mt-1 {{ $salesGrowth > 0 ? 'text-green-600' : 'text-red-600' }}">
+                        <p id="sales_growth" class="text-xs mt-1 {{ $salesGrowth > 0 ? 'text-green-600' : 'text-red-600' }}">
                             {{ $salesGrowth > 0 ? '↗' : '↘' }} {{ number_format(abs($salesGrowth), 1) }}% vs previous day
                         </p>
                     @endif
@@ -491,6 +492,7 @@ $(document).ready(function() {
         </div>
 
         <!-- Pending Orders (Real-time) -->
+        <a href="{{ route('admin.orders.index') }}">
         <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-orange-500">
             <div class="flex items-center justify-between">
                 <div>
@@ -505,15 +507,16 @@ $(document).ready(function() {
                 </div>
             </div>
         </div>
+        </a>
 
         <!-- Total Orders -->
         <div class="bg-white rounded-lg shadow-sm p-6 border-l-4 border-blue-500">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600">Selected Date Orders</p>
-                    <p class="text-3xl font-bold text-blue-600">{{ $totalOrders }}</p>
+                    <p id="total_orders" class="text-3xl font-bold text-blue-600">{{ $totalOrders }}</p>
                     @if($totalOrders > 0)
-                        <p class="text-xs text-gray-500 mt-1">Avg: ₹{{ number_format($todaySales / $totalOrders, 0) }} per order</p>
+                        <p id="avg_price" class="text-xs text-gray-500 mt-1">Avg: ₹{{ number_format($todaySales / $totalOrders, 0) }} per order</p>
                     @endif
                 </div>
                 <div class="bg-blue-100 rounded-full p-3">
@@ -529,7 +532,7 @@ $(document).ready(function() {
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm font-medium text-gray-600">Active Tables</p>
-                    <p class="text-3xl font-bold text-purple-600">{{ $activeTables }}</p>
+                    <p id="active_table" class="text-3xl font-bold text-purple-600">{{ $activeTables }}</p>
                     <p class="text-xs text-gray-500 mt-1">Currently occupied</p>
                 </div>
                 <div class="bg-purple-100 rounded-full p-3">
@@ -548,10 +551,13 @@ $(document).ready(function() {
             <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 class="text-lg font-semibold text-gray-900">Recent Orders</h2>
                 <a href="{{ route('admin.orders.index') }}" class="text-orange-500 hover:text-orange-600 text-sm font-medium">View All</a>
+                <button id="refresh-orders-btn" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                    Refresh Orders
+                </button>
             </div>
             
             <div class="overflow-x-auto">
-                <table class="w-full">
+                {{-- <table class="w-full">
                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
@@ -609,6 +615,21 @@ $(document).ready(function() {
                             </td>
                         </tr>
                         @endforelse
+                    </tbody>
+                </table> --}}
+                <table class="w-full">
+                 <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Table</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    </tr>
+                 </thead>
+                 {{-- The ID on the tbody is crucial for the AJAX update --}}
+                    <tbody class="bg-white divide-y divide-gray-200" id="recent-orders-tbody">
+                        @include('admin.orders.recent_orders_table', ['recentOrders' => $recentOrders])
                     </tbody>
                 </table>
             </div>
@@ -783,6 +804,7 @@ $(document).ready(function() {
 @push('scripts')
 <!-- Chart.js CDN -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{-- <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.js"></script> --}}
 
 <script>
 
@@ -821,7 +843,11 @@ $(document).ready(function() {
     
     // Real-time updates every 5 seconds
     setInterval(function() {
-        updateDashboard();
+        if (!window.location.search) {
+
+            updateDashboard();
+        }
+        
     }, 5000);
     
     function initializeSalesChart() {
@@ -879,23 +905,78 @@ $(document).ready(function() {
             }
         });
     }
+
+       // Function to format numbers as currency (e.g., ₹1,23,456)
+        function formatCurrency(number) {
+            return '₹' + new Intl.NumberFormat('en-IN').format(number);
+        }
+        
+        // Function to format numbers with commas (e.g., 1,234)
+        function formatNumber(number) {
+            return new Intl.NumberFormat('en-IN').format(number);
+        }
+
+
     // console.log("this is dashboard page");
     function updateDashboard() {
         $.get('{{ route("admin.live-data") }}')
             .done(function(data) {
                 // Update pending orders count
                 const currentCount = parseInt($('#pending-orders-count').text());
-                const newCount = data.pending_orders.length;
-                
+                // const newCount = data.pending_orders.length;
+                const newCount = parseInt(data.pendingOrders_count);
+                  // 1. Update Pending Orders Count
                 $('#pending-orders-count').text(newCount);
+
+                   // 2. Update Active Tables Count
+                if (data.activeTables !== undefined) {
+                        $('#active_table').text(data.activeTables);
+                    }
+
+                    // 3. Update Total Orders
+                    $('#total_orders').text(formatNumber(data.totalOrders));
+
+                    // 4. Update Total Sales
+                    $('#total_sales').text(formatCurrency(data.todaySales));
+
+                  
+
+                // 5. Update Average Price
+                    const avgPriceEl = $('#avg_price');
+                    if (data.totalOrders > 0) {
+                        const avgPrice = Math.round(data.todaySales / data.totalOrders);
+                        avgPriceEl.text(`Avg: ${formatCurrency(avgPrice)} per order`);
+                        avgPriceEl.show();
+                    } else {
+                        avgPriceEl.text(''); // Clear text if no orders
+                        avgPriceEl.hide();
+                    }
+                    
+                    // 6. Update Sales Growth
+                    const salesGrowthEl = $('#sales_growth');
+                    if (data.salesGrowth != 0) {
+                        const growthPercentage = Math.abs(data.salesGrowth).toFixed(1);
+                        const arrow = data.salesGrowth > 0 ? '↗' : '↘';
+                        const textColorClass = data.salesGrowth > 0 ? 'text-green-600' : 'text-red-600';
+                        
+                        salesGrowthEl.text(`${arrow} ${growthPercentage}% vs previous day`);
+                        // Ensure correct text color class is applied
+                        salesGrowthEl.removeClass('text-green-600 text-red-600').addClass(textColorClass);
+                        salesGrowthEl.show();
+                    } else {
+                        salesGrowthEl.text(''); // Clear text if no growth
+                        salesGrowthEl.hide(); }    
+
+
                 
                 // Show alert for new orders
-                if (newCount > currentCount && data.new_orders_count > 0) {
-                    showNewOrderAlert(data.pending_orders[0]);
+                if (newCount > currentCount && data.new_orders.length > 0) {
+                    showNewOrderAlert(data.new_orders[0]);
+                    updateRecentOrdersTableBody();
                 }
                 
                 // Update recent orders table
-                updateRecentOrdersTable(data.pending_orders);
+                // updateRecentOrdersTable(data.pending_orders);
             })
             .fail(function() {
                 console.log('Failed to fetch live data');
@@ -903,13 +984,51 @@ $(document).ready(function() {
     }
 
 
+    $('#refresh-orders-btn').click(function() {
+        updateRecentOrdersTableBody.call(this);
+    });
+
+
+    function updateRecentOrdersTableBody(){
+        if(!window.location.search){
+         // Show a loading state
+        $(this).prop('disabled', true).text('Refreshing...');
+
+        $.ajax({
+            url: "{{ route('admin.orders.refresh') }}",
+            type: 'GET',
+            // If you have a date filter on the page, you can pass its value
+            // data: {
+            //     date: $('#your-date-picker').val() 
+            // },
+            success: function(response) {
+                // Replace the content of the table body with the new HTML
+                $('#recent-orders-tbody').html(response.html);
+            },
+            error: function(xhr, status, error) {
+                console.error("Error refreshing orders: " + error);
+                // Optional: Show an error message to the user
+                alert('Could not refresh orders. Please try again.');
+            },
+            complete: function() {
+                // Re-enable the button
+                $('#refresh-orders-btn').prop('disabled', false).text('Refresh Orders');
+            }
+        });
+        }
+        else{
+            alert('Cannot refresh orders while a date filter is applied. Please reset the filter to view live data.');
+        }
+    }
+
 
     
     function showNewOrderAlert(order) {
+        $('#accept-btn').removeData('order-id').removeData('status');
         $('#new-order-id').text(order.id);
         $('#new-order-table').text(order.table.table_number);
-        var acceptButton = $('#accept-btn');
-        acceptButton.attr('data-order-id', order.id);
+            var acceptButton = $('#accept-btn');
+            acceptButton.attr('data-order-id', order.id);
 
         // 3. Set the total amount (using 'en-IN' locale for Indian Rupee format)
     // Make sure 'total_amount' is available and a number.
@@ -999,7 +1118,10 @@ $(document).ready(function() {
      // Enhanced status update with better feedback
     $('#accept-btn').click(function() {
         const button = $(this);
-        const orderId = button.data('order-id');
+        // const orderId = button.data('order-id');
+        const orderId = $('#new-order-id').text();
+         
+
         const status = button.data('status');
         
         // Store original content
